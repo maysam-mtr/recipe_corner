@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Page</title>
+
+
+    <!--
+        PROFILE PAGE FOR THE USER
+    -->
+
+
+    <!--
+        bootstrap import
+    -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/css/bootstrap.min.css" 
+    integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+
+
+    <!--
+        - material icon
+    -->
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+
+    
+</head>
+<body>
+    <!--
+        Navigation bar
+    -->
+    <header class="header" data-header> 
+
+        <nav class="navbar navbar-expand-lg navbar-light bg-white">
+            <a href="/" class="logo">
+                <img src="/img/logoLight.png" width="190" height="80" alt="RecipeCorner" class="logo">
+            </a>
+            <div class="navbar-nav ml-auto">
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" 
+                aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <div class="navbar-nav">
+                    <a class="nav-item nav-link mr-4" href="/home">Home</a>
+                    <a class="nav-item nav-link mr-4" href="/recipes">Recipes</a>
+                    <a class="nav-item nav-link mr-4" href="/following">Following</a>
+                    <a class="nav-item nav-link mr-4" href="/savedRecipes">Saved Recipes</a>
+                    <a class="nav-item nav-link active mr-4" href="/profile">
+                        <img src="/img/profileicon.png" width="30" length="15" alt="profileicon"> <span class="sr-only">(current)</span></a>
+              </div>
+            </div>
+            </div>
+          </nav>
+    </header>
+    
+
+    <div class="container-fluid" style="background-color: #b9f7b9; height: 100%; padding-bottom: 400px;">
+        <div class="row" style="padding-top: 50px;">
+          <!-- Profile Section -->
+          <div class="col-md-4" style="padding-left: 60px;">
+            <div class="card" style="padding-left: 60px;">
+              <% if(user.user_profile_pic_path) { %>
+                <img src="<%= user.user_profile_pic_path %>" class="card-img-top" alt="Profile Picture" style="width: 300px; height: 300px;">
+              <% } else { %>
+                <img src="/img/blank-profile.jpg" class="card-img-top" alt="Profile Picture" style="width: 300px; height: 300px;">
+              <% } %>
+              <div class="card-body">
+                <h3 class="card-title"><%= user.user_first_name + " " + user.user_last_name%></h3>
+                <h5 class="card-text"><%= user.username %></h5>
+                <p class="card-text">
+                  <% if(user.user_description) { %>
+                    <%= user.user_description %>
+                  <% } %>
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Stats Section -->
+          <div class="col-md-5" style="padding-left: 60px;">
+            <div class="d-flex justify-content-between rounded" style="background-color: #ffffff; padding: 20px 20px;">
+                <div><strong><%= postsnb.numberOfPostedrecipes %></strong> Posts</div>
+                <div><strong><%= followers.followers %></strong> Followers</div>
+                <div><strong><%= followings.followings %></strong> Following</div>
+              </div>
+          </div>
+
+          <div class="col-md-1" style="padding-left: 100px;">
+            <button class="btn btn-success"><span class="material-symbols-outlined">edit</span>Edit Profile</button>
+          </div>
+
+          <div class="col-md-1" style="padding-left: 120px;">
+            <a class="btn btn-success" href="/logout" role="button"><span class="material-symbols-outlined">logout</span>Logout</a>
+          </div>
+          
+        </div>
+
+        <!-- Posts Section -->
+        <div class="row" >
+          <div class="col margin-left" style="padding: 60px;">
+              <div class="rounded" style="background-color: #ffffff; padding: 20px 20px;">
+                  <div class="d-flex justify-content-between">
+                      <h2 style="padding-bottom: 10px;"><span class="material-symbols-outlined">storefront</span>Posts</h2>
+                  
+                      <!--create post functionality-->
+
+                      <!-- Button to Open the Modal -->
+                      <button type="button" class="btn btn-success" data-toggle="modal" data-target="#myModal">
+                        + Create Recipe
+                      </button>
+
+                      <!-- The Modal -->
+                      <div class="modal" id="myModal">
+                        <div class="modal-dialog">
+                          <div class="modal-content">
+
+                            <!-- Modal Header -->
+                            <div class="modal-header">
+                              <h4 class="modal-title">Create Recipe Post</h4>
+                              <button type="button" class="close" data-dismiss="modal">×</button>
+                            </div>
+
+                            <!-- Modal body -->
+                            <div class="modal-body">
+                              <form action="/api/recipe/createRecipe/<%= user.user_id %>" method="post">
+                                <label for="exampleFormControlFile1">Enter recipe picture: *</label>
+                                <input type="file" class="form-control-file" id="exampleFormControlFile1">
+
+                                <label for="inputeRecipeName">Enter recipe title: *</label>
+                                <input type="text" id="inputRecipeName" class="form-control mb-3" name="recipe_name" placeholder="Recipe Title" required="true">
+                                <div class="invalid-feedback">
+                                  Please enter recipe title.
+                                </div>
+
+                                <label for="inputDescription">Enter description: </label>
+                                <input type="text" id="inputDietType" class="form-control mb-3" name="recipe_description" placeholder="Description" required="false">
+
+                                <label for="inputCuisineType">Choose cuisine type (General if none): *</label>
+                                <select class="form-control" id="inputCuisineType" name="cuisine_type">
+                                  <option>General</option>
+                                  <option>Asian</option>
+                                  <option>Lebanese</option>
+                                  <option>Korean</option>
+                                  <option>Italian</option>
+                                </select>
+                                <div class="invalid-feedback">
+                                  Please choose cuisine type.
+                                </div>
+
+                                <label for="inputNbOfServings">Enter number of servings: *</label>
+                                <input type="number" id="inputNbOfServings" class="form-control mb-3" min="0" name="nb_of_servings" placeholder="Servings" required="true">
+                                <div class="invalid-feedback">
+                                  Please enter number of servings.
+                                </div>
+
+                                <label for="inputIngredients">Enter Ingredients: *</label>
+                                <input type="text" id="inputIngredients" class="form-control mb-3" name="ingredients" placeholder="Ingredients..." required="true">
+                                <div class="invalid-feedback">
+                                  Please enter ingredients.
+                                </div>
+
+                                <label for="inputInstructions">Enter Instructions: *</label>
+                                <input type="text" id="inputInstructions" class="form-control mb-3" name="instructions" placeholder="Instructions..." required="true">
+                                <div class="invalid-feedback">
+                                  Please enter instructions.
+                                </div>
+
+                                <label for="inputPrepTime">Enter preparation time (in mins): *</label>
+                                <input type="number" id="inputPrepTime" class="form-control mb-3" name="prep_time" required="true" min="0">
+                                <div class="invalid-feedback">
+                                  Please enter valid time.
+                                </div>
+
+                                <label for="inputFoodCategory">Choose meal type: *</label>
+                                <select class="form-control" id="inputFoodCategory" name="food_category">
+                                  <option>Breakfast</option>
+                                  <option>Dinner</option>
+                                  <option>Lunch</option>
+                                  <option>Snack</option>
+                                  <option>Dessert</option>
+                                  <option>Beverage</option>
+                                  <option>Appetizer</option>
+                                  <option>Sauce</option>
+                                </select>
+                                <div class="invalid-feedback">
+                                  Please choose a meal type.
+                                </div>
+
+                                <label for="inputDietType">Enter diet type(General if none): *</label>
+                                <input type="text" id="inputDietType" class="form-control mb-3" name="diet_type" placeholder="Diet type" required="true">
+                                <div class="invalid-feedback">
+                                  Please enter a diet type.
+                                </div>
+
+                                <label for="inputCalories">Enter calories number: *</label>
+                                <input type="number" id="inputCalories" class="form-control mb-3" name="calories_nb" required="true" min="0">
+                                <div class="invalid-feedback">
+                                  Please enter number of calories.
+                                </div>
+
+                                <button class="btn btn-success" type="submit">Post</button>
+                              </form>
+                            </div>
+
+                            <!-- Modal footer -->
+                            <div class="modal-footer">
+                              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            </div>
+
+                          </div>
+                        </div>
+                      </div>
+
+
+                  </div>
+
+                  <!-- Scrollable posts box -->
+                  <div style="height: 300px; overflow-y: auto;">
+                      <!-- posts -->
+                      <div class="container-fluid" style="padding-left: 100px;">
+                        <div class="row">
+                            <% if ((Array.isArray(posts) && posts.length)) { %>
+                                <% posts.forEach(function(post) { %>
+                                    <div class="col-sm-3 mb-3"> 
+                                        <a href="/api/recipe/getRecipeById/<%= post.recipe_id %>" style="color: black;">
+                                            <div class="card" style="width: 18rem;">
+                                              <% if(post.recipe_picture_path) { %>
+                                                <img src= "<%= post.recipe_picture_path %>" class="card-img-top" alt="recipe pic">
+                                              <% } else { %>
+                                                <img src="/img/default-recipe-pic.jpg" class="card-img-top" alt="Profile Picture" >
+                                              <% } %>
+                                                
+                                                <div class="card-body">
+                                                    <h5 class="card-title"><%= post.recipe_name %></h5>
+                                                    <p class="card-text">recipe hey</p>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                <% }) %> 
+                            <% } else { %>
+                                <p>No posts yet...</p>
+                            <% } %>
+                        </div>
+                  </div>
+              </div>
+          </div>
+        </div>
+
+
+    </div>  
+
+    <!--
+        ALERT OR SUCCESS MESSAGE 
+    -->
+    <% if(message) { %>
+      <div class="modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Alert</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <p><%= message %></p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% } %>
+
+    <!--
+      IMPORTS FOR THE FUNCTIONALITY OF THE MODAL
+    -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+</body>
+</html>

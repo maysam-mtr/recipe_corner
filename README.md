@@ -1,6 +1,6 @@
 # Recipe Corner API
 
-Welcome to the Recipe Corner API Backend repository! This repository contains the code and resources for the backend of the web application Recipe Corner. This backend is built using Node.js, Express, and uses Native SQL to provide the necessary server and API functionality.
+Welcome to the Recipe Corner repository! This repository contains the code and resources for the backend and frontend of the web application Recipe Corner. This project is built using Node.js, Express, EJS, Bootstrap, and uses Native SQL to provide the necessary server and API functionality.
 
 
 ## Table of Contents
